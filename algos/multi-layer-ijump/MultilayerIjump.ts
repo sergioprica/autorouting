@@ -351,7 +351,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
           dir.dx === forwardDir.dx &&
           dir.dy === forwardDir.dy &&
           dir.dl === forwardDir.dl &&
-          node.parent?.obstacleHit
+          node.obstacleHit
         ) {
           return false
         }
@@ -467,6 +467,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
 
         travelDirs3.push({
           ...travelDir,
+          obstacle: null,
           travelDistance: goalDistAlongTravelDir - stopShortDistance,
           enterMarginCost: 0,
           travelMarginCostFactor: 1,
@@ -483,6 +484,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
           ) {
             travelDirs3.push({
               ...travelDir,
+              obstacle: null,
               travelDistance: overcomeDistance - this.OBSTACLE_MARGIN + margin,
               enterMarginCost: enterCost,
               travelMarginCostFactor: travelCostFactor,
@@ -492,6 +494,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
         if (travelDir.wallDistance === Infinity) {
           travelDirs3.push({
             ...travelDir,
+            obstacle: null,
             travelDistance: goalDistAlongTravelDir,
             enterMarginCost: 0,
             travelMarginCostFactor: 1,
