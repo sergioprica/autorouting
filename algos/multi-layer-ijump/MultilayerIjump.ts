@@ -351,6 +351,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
           dir.dx === forwardDir.dx &&
           dir.dy === forwardDir.dy &&
           dir.dl === forwardDir.dl &&
+          dir.dl !== 0 &&
           node.parent?.obstacleHit
         ) {
           return false
@@ -368,8 +369,18 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
 
         return collisionInfo
       })
-      // Filter out directions that are too close to the wall
-      .filter((dir) => !(dir.wallDistance < this.OBSTACLE_MARGIN))
+      // Filter out directions that are too close to the wall (or forwardDir when already at the wall)
+      .filter((dir) => {
+        if (
+          dir.dx === forwardDir.dx &&
+          dir.dy === forwardDir.dy &&
+          dir.dl === forwardDir.dl &&
+          node.parent
+        ) {
+          return dir.wallDistance > this.OBSTACLE_MARGIN + 1e-6
+        }
+        return !(dir.wallDistance < this.OBSTACLE_MARGIN)
+      })
 
     /**
      * Figure out how far to travel. There are a couple reasons we would stop
@@ -489,7 +500,11 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
             })
           }
         }
-        if (travelDir.wallDistance === Infinity) {
+        if (
+          travelDir.wallDistance === Infinity &&
+          isGoalInTravelDir &&
+          goalDistAlongTravelDir > 0
+        ) {
           travelDirs3.push({
             ...travelDir,
             travelDistance: goalDistAlongTravelDir,
